@@ -1,0 +1,78 @@
+spring:
+  devtools:
+    restart:
+      enabled: true
+  ##??? ?? ??
+  ## http://localhost:8080/swagger-ui/index.html
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+    servlet:
+      multipart:
+        maxFileSize: 10485760
+        maxRequestSize: 10485760
+        location: C:/TrelloUpload/
+
+    hiddenmethod:
+      filter:
+        enabled: true
+
+    resource:
+      requestPath: /attach/att/**
+      path: file:///C:/TrelloUpload/
+
+  ## redis
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
+      cache-null-values: true
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
+
+  ## My SQL
+  datasource:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mysql://localhost:3306/Trello?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: anjgkwlsiasia!
+#    url: jdbc:log4jdbc:mysql://192.168.0.141:3306/Trello?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+#    username: M2MNEW
+#    password: m2makstp
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 10000
+      connection-init-sql: SELECT 1
+      validation-timeout: 5000
+      minimum-idle: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+## mybatis
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+
+## ?? ?? ?? ??
+logging:
+  level:
+    root: info
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: true
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      format_sql: true
+      ddl-auto: create
+
+## ??? ?? value
+#phone:
+#  apiKey: NCSWLIJKYAF0ENST
+#  apiSecret: ZUVAIVYP7M6BQCAQPY4OBWP1STWHA0BT

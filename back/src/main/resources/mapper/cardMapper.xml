@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pjt.trello.repository.CardDAO">
+    <!-- ======== SELECT ====== -->
+    <select id="getCardInfo" parameterType="String" resultType="pjt.trello.model.CardVO">
+        SELECT
+            card_title,
+            card_info
+        FROM tb_card
+        <!--파일 첨부 기능 구현하면 join 해서 파일도 가져와야함-->
+        WHERE card_code = #{cardCode}
+    </select>
+
+    <select id="searchCard" parameterType="String" resultType="pjt.trello.model.SearchDTO">
+        SELECT
+            c.card_title,
+            c. card_code,
+            l.list_code,
+            l.list_name,
+            b.brd_code,
+            b.brd_name
+        FROM tb_card c
+        JOIN tb_list l
+            ON c.list_code = l.list_code
+        JOIN tb_brd b
+            ON l.brd_code = b.brd_code
+        WHERE
+            b.user_id = #{userId}
+        AND
+            c.card_title LIKE Concat('%',#{searchWord},'%')
+
+    </select>
+
+    <!-- ======== UPDATE ====== -->
+    <update id="updateCard" parameterType="pjt.trello.model.CardVO">
+        UPDATE
+            tb_card
+        SET
+            card_title = #{cardTitle},
+            card_info = #{cardInfo}
+        WHERE
+            card_code = #{cardCode}
+    </update>
+</mapper>

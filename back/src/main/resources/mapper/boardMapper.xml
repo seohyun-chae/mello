@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pjt.trello.repository.BoardDAO">
+
+    <!-- ======== INSERT ====== -->
+    <insert id="addBrd" parameterType="pjt.trello.model.BoardDTO">
+        INSERT INTO tb_brd (
+            brd_seq,
+            brd_code,
+            brd_name,
+            user_id
+        ) VALUES (
+        NULL,
+        #{brdCode},
+        #{brdName},
+        #{userId}
+        )
+    </insert>
+
+    <insert id="insertList" parameterType="pjt.trello.model.LstVO">
+        INSERT INTO tb_list (
+        list_seq,
+        list_code,
+        list_idx,
+        list_name,
+        brd_code
+        ) VALUES (
+        NULL,
+        #{listCode},
+        #{listIdx},
+        #{listName},
+        #{brdCode}
+        )
+    </insert>
+
+    <insert id="insertCard" parameterType="pjt.trello.model.CardVO">
+        INSERT INTO tb_card (
+        card_seq,
+        card_code,
+        card_title,
+        list_code,
+        card_idx
+        ) VALUES (
+        NULL,
+        #{cardCode},
+        #{cardTitle},
+        #{listCode},
+        #{cardIdx}
+        )
+    </insert>
+
+    <!-- ======== SELECT ====== -->
+    <select id="getBrdList" parameterType="String" resultType="pjt.trello.model.BoardVO">
+        SELECT
+            brd_seq,
+            brd_code,
+            brd_name
+        FROM tb_brd
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="getBrdInfo" parameterType="String" resultType="pjt.trello.model.BoardDetailDTO">
+        SELECT
+            b.brd_code,
+            b.brd_name,
+            l.list_code,
+            l.list_name,
+            l.list_idx,
+            c.card_code,
+            c.card_title,
+            c.card_idx,
+            c.img_cover
+        FROM tb_list l
+        JOIN tb_brd b
+        ON l.brd_code = b.brd_code
+        LEFT JOIN tb_card c
+        ON c.list_code = l.list_code
+        WHERE b.brd_code = #{brdCode}
+        ORDER BY l.list_idx, c.card_idx
+    </select>
+
+    <!-- ======== UPDATE ====== -->
+    <update id="updateListSort" parameterType="pjt.trello.model.SortDTO">
+        UPDATE
+            tb_list
+        SET
+            list_idx = #{listIdx}
+        WHERE
+            list_code = #{listCode}
+    </update>
+
+    <update id="updateCardSort" parameterType="pjt.trello.model.SortDTO">
+        UPDATE
+            tb_card
+        SET
+            list_code = #{listCode},
+            card_idx = #{cardIdx}
+        WHERE
+            card_code = #{cardCode}
+    </update>
+
+    <update id="renameList" parameterType="pjt.trello.model.SortDTO">
+        UPDATE
+            tb_list
+        SET
+            list_name = #{listName}
+        WHERE
+            list_code = #{listCode}
+    </update>
+
+    <!-- ======== DELETE ====== -->
+    <delete id="deleteBoard" parameterType="String">
+        DELETE FROM tb_brd
+        WHERE brd_code = #{boardCode}
+    </delete>
+
+    <delete id="deleteList" parameterType="String">
+        DELETE l, c
+        FROM tb_list l
+        LEFT JOIN tb_card c
+        ON c.list_code = l.list_code
+        WHERE l.list_code = #{listCode}
+    </delete>
+
+    <delete id="deleteCard" parameterType="String">
+        DELETE FROM tb_card
+        WHERE card_code = #{cardCode}
+    </delete>
+</mapper>

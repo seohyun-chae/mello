@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pjt.trello.repository.AttachDAO">
+    <!-- ======== INSERT ====== -->
+    <insert id="uploadAttach" parameterType="java.util.List">
+            INSERT INTO tb_attachment (
+                attach_seq,
+                attach_name,
+                org_name,
+                attach_loc,
+                cre_dt,
+                card_code,
+                del_yn
+            ) VALUES
+            <foreach collection="list" item="item" separator=",">
+            (
+                NULL,
+                #{item.attachName},
+                #{item.orgName},
+                #{item.attachLoc},
+                date_format(now(),'%Y%m%d%H%i%s'),
+                #{item.cardCode},
+                'n'
+            )
+            </foreach>
+    </insert>
+
+    <!-- ======== UPDATE ====== -->
+    <update id="deleteAttach" parameterType="String">
+        UPDATE
+            tb_attachment
+        SET
+            del_yn = 'y'
+        WHERE
+            attach_name = #{attachName}
+    </update>
+
+    <!-- ======== SELECT ====== -->
+    <select id="getAttachList" parameterType="String" resultType="pjt.trello.model.AttachVO">
+        SELECT
+            attach_seq,
+            attach_name,
+            org_name,
+            attach_loc,
+            cre_dt
+        FROM
+            tb_attachment
+        WHERE
+            card_code = #{cardCode}
+        AND
+            del_yn = 'n'
+    </select>
+
+    <select id="selectedFileInfo" parameterType="String" resultType="pjt.trello.model.AttachVO">
+        SELECT
+            org_name,
+            attach_name,
+            attach_loc
+        FROM
+            tb_attachment
+        WHERE
+            attach_name = #{attachName}
+    </select>
+    <!-- ======== DELETE ====== -->
+</mapper>
